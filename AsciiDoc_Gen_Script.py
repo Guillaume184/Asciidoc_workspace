@@ -5,8 +5,6 @@ import re
 import sys
 
 ## Capture arguments
-import sys
-
 if len(sys.argv) < 2:
     print("Please specify the *.adoc file to process")
     sys.exit(1)
