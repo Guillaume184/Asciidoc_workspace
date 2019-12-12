@@ -1,0 +1,13 @@
+{
+    "http.proxy": "http://force-proxy-eur.pac.schneider-electric.com:80/",
+    "https_proxy": "http://force-proxy-eur.pac.schneider-electric.com:80/",
+    "no_proxy": "localhost,127.0.0.1",
+    "spellright.language": [
+        "en"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext"
+    ]
+}
