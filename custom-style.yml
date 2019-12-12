@@ -1,0 +1,72 @@
+extends: default
+
+page:
+  margin: [1.5cm, 1.5cm, 1.5cm, 1.5cm]
+  size: A4
+
+image:
+  align: left
+
+table:
+  background_color: $page_background_color
+  border_color: 5290DB
+  border-style: solid
+  border_width: $base_border_width
+  cell_padding: 3
+  head:
+    font_style: bold
+    font-size: 12
+    text-transform: uppercase
+    border_bottom_width: $base_border_width * 2.5
+  body:
+    stripe_background_color: f9f9f9
+    font-size: 6
+  foot:
+    background_color: f0f0f0
+
+toc:
+  indent: $horizontal_rhythm
+  font-style: bold
+  font-color: #5D6284
+  font-size: 9
+  text-decoration-color: #cccccc
+  line_height: 1.4
+  dot_leader:
+    #content: ". "
+    font_color: a9a9a9
+    #levels: 2 3
+
+heading:
+  ## Headings
+  font-style: bold
+  line-height: 1
+  
+  ## Heading 2
+  h2-font-size: $base-font-size * 1.5
+  h2-margin-top: $vertical-spacing * 0.5
+  h2-text-transform: uppercase
+  h2-margin-bottom: 6
+  h2-font-color: #434B89
+
+  ## Heaing 3
+  h3-font-size: $base-font-size * 1.2
+  h3-margin-top: $vertical-spacing * 0.2
+  h3-margin-bottom: 3
+  h3-font-color: #414CA2
+
+## Centrer les numéros de page
+footer:
+  columns: =100%
+  recto:
+    center:
+      content: '{page-number}'
+  verso:
+    center:
+      content: '{page-number}'
+
+outline-list:
+  item-spacing: 2
+  indent: 30
+
+caption:
+  align: center

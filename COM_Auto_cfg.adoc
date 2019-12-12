@@ -1,0 +1,200 @@
+[%nonfacing]
+// :title-page:
+:imagesdir: ./images 
+:toc: macro 
+// :toc-title: Table of Content 
+:toclevels: 2
+:sectnums: 
+:hardbreaks:
+:icons: font 
+:pdf-style: custom-style.yml 
+
+:revnumber: 1.0
+
+= Automation System : Automatic Configuration of Interfaces
+
+*_Purpose of the Document_* 
+****
+This document follows the work of enlightening CPG customer journey regarding engineering activities performed in https://schneider-electric.box.com/s/hmm05oolywikp96skkozavv2f7ju8rae[Food & Bev. Automation System - Configuration User Story \[4.1\] - 2019.11.28.pdf] document.
+After several project context change, the decision has been made to pivot, not focussing on automatizing functional programming of the PLC any more but to investigate other aspects of the user story where both :
+
+  - SDEC Team could have value 
+  - Quick wins could be achieved easier
+
+Decision has been made to proceed design thinking activities focussing on automation system communication aspects. 
+The present document proposes a landscape description where SDEC team could pic a topic to investigate further.
+Business information and customer pains stated in the present document need to be validated against PLC, SCADA, MES ... configuration tools current capabilities. These tools may have made some relevant progress over the last years.
+Also, integrator companies may have developed frameworks upon low level programming tools to extend their ability to manage big project configuration. 
+****
+
+toc::[]
+
+<<<
+## Context Definition
+### Asset Model
+
+The Asset Model is considered, in first approach, as a tree decomposition of the factory *Assets*. Higher level of the Asset Model is *_'The Factory'_* while the lower level of he Asset Model is composed of a collection of basic equipment such as *_'Pumps'_* or *_'Valves'_*.
+Each Asset, whatever its hierarchy level, can be associated with different "facets". Only relevant facets may be used according to the hierarchy level.
+
+.Asset Model representation
+image::svg-1.svg[image,  400, align='center']
+
+When implemented into a PLC system, a _low level_ *Asset* should involve several developments at PLC, SCADA, MES ... levels. Indeed, 
+
+  - the PLC needs to control or perform signal acquisition, 
+  - the SCADA needs to display and send commands,
+  - the MES would also have a maintenance facet.
+
+### PLC
+
+Let's take the example of a *_Valve_*. 
+The valve has its PLC *Asset* object :
+
+.Valve PLC Asset Object
+image::Valve_plc_dfb.png[image,  400, align='center']
+
+This object implements: 
+
+  - inputs to manage automated control of the valve, manual override, state (open/close), status (OK/failed), etc.
+  - outputs to feed SCADA and HMI equipment and logic interlocks
+
+NOTE: The PLC I/O's are not explicitly represented on the object given in the figure above. 
+Manual commands could be hardwired while alarms could be mapped to the network. 
+The Open / Close / Check-back wired between the PLC and the valve equipment are not represented at all on the figure. They are implied by the use of the object.
+
+### SCADA
+
+Let's continue the example of the *_Valve_*. 
+
+Here is the object that can be displayed on a SCADA system :
+
+.Valve SCADA Visual Object
+image::Valve_scada_dfb.png[image,  400, align='center']
+
+This is a complex object as it embeds a lot of information and symbols.
+Symbols definitions are provided in following sub-chapters.
+
+The logic behind displaying these symbols is based on both Valve equipment signals and factory current situation and objectives. The behaviour logic of SCADA visual object is most of the time very simple (binary logic). The complexity comes with the huge quantity of information to manage. 
+
+#### Alarms
+
+.Valve SCADA Alarms Symbols
+image::Valve_alarm.png[image,  400, align='center']
+
+#### Modes
+
+.Valve SCADA Modes Symbols
+image::Valve_mode.png[image,  400, align='center']
+
+#### Status & Quality
+
+.Valve SCADA Status & Quality Symbols
+image::Valve_status_quality.png[image, 400, align='center']
+
+### MES
+
+Complete with MES information here ...
+
+### Automation Communication
+Automation communication can be performed at different levels according the communication protocol that has been selected:
+
+<<<
+## PROPOSITION : Automating Communication Generation
+### Activity Description
+PLC, SCADA, MES are most of the time developed by different people from different technical background and working with different tool chains. Also, skills required for each development is also very different and the development methodologies and languages can also show major differences (especially true for PLC).
+
+On "small projects" with low budgets, which is the typical situation we encounter on *_Food & Beverage_* project, we assume that basic automation solutions are used letting integration activity between SCADA, PLC and MES to the Integrator / OEM. We also assume that only few effort has been placed on capitalizing on architectures and methodologies. We suppose that *_Food & Beverage_* projects build upon PLC and SCADA low level libraries and overall architecture principles.
+
+We assume that *_Food & Beverage_* projects don't make use of DCS (_Distributed Control System_). The reasons are:
+
+  - The DCS solutions are two expensive for such projects
+  - The DCS solutions are also complex to implement because intended to manage very big projects (Oil & Gas, Nuclear)
+
+### Pain Points
+. Amount of information
+Automation systems usually implement al lot of data, information, interfaces, etc. The complexity comes from the big amount of information to manage rather than from the intrinsic complexity of the information.
+. Manual configuration
+Managing interfaces between different solutions and different people is always costly.
+. Manual configuration management
+As several teams / people are working in parallel, a close configuration management process needs to be implemented. Most of the time, this activity is not centralized and performed manually. 
+. Errors and bugs are discovered late in development
+Moreover, even though continuous integration is performed on the project, bugs always go through the design process and show at the the validation and test activities being discovered when performing the first interconnected tests with the real hardware equipment.
+
+### Proposition
+Proposition is to automate interfaces definition and communication setup based on information we get out of :
+
+  * P&ID :
+  ** Factory architecture (system, sub-systems, *Assets* available under each sub-system)
+  ** Unique reference of each *Asset*
+  * Asset Model :
+  ** Definition for each *Asset*
+  ** Link to PLC, SCADA, MES library element 
+  * Automation System Architecture :
+  ** List of PLC, SCADA, Touch Screens, MES equipment
+  ** Communication pattern between these equipment
+  ** "System management allocation" (which system is managed by each equipment)
+
+Combining all of these information, it would be possible to : 
+
+  * Instantiate *Asset* library objects in each PLC, SCADA, MES configuration tools
+  * Pre-configure communication binding between these *Asset* objects
+  * Generate (partially) the communication backbone configuration
+
+If communications are "securely managed", this would allow easier integration between different parts of the Automation system providing a clear work context for every people joining the project.
+
+### Additional Context
+
+The kind of solution presented here is clearly not a revolution. The value of developing a specific solution for _Food & Beverage_ domain would lie upon a very light implementation specifically optimized to the nature of the process. Also, providing this feature outside typical DCS solutions could make it affordable for _Food & Beverage_ projects.
+
+<<<
+## PROPOSITON : Automating Data Communication Test
+### Activity Description
+
+Data communication testing is one of the first integration test performed on an automation system. Interface testing is so critical that it is often performed iteratively since the early development stages of the project. PLC, SCADA and other HMI are progressively connected to each other in order to test communication end to end.
+Testing data communication is a prerequisite to testing elaborated functions and validating operation of the factory.
+
+### Pain Points
+
+Testing data communication is painful for several reasons:
+
+. Systematic and exhaustive approach 
+Interfaces need to get one definition only. Interface definition shall cover all the system. It consists in defining internal and external interfaces. External interfaces are defined early in the development process.
+. Interfaces management need to be handled centrally 
+Each equipment may be controlled and monitored by several I&C Systems. Everybody needs to access the same definition of the interfaces. 
+. Configuration management
+Interfaces definition is refined all along the project. External interfaces are defined at first because it participates to system scope definition and internal interfaces are progressively defined according to architecture progress. Everybody needs to know which version of the interface he's working with.
+. Tests need to be performed once again in the factory / on site 
+When the system is developed and successes FAT, it is then shipped to the factory so as to be connected to the real process. The test means are disconnected, cabinets are unmounted and handed over to expedition teams. Then it is assembled again in the factory. This activity will probably have caused "connection inversions" or tightening issues. All the connections need to be tested again.
+
+### Proposition
+
+The proposition is to help managing the interfaces all along development and test activities. 
+Hopefully, if the proposition 1 is fulfilled, the pain point should be relieved significantly. However, maybe not all the data communication can be generated, and the problem of SAT Data Communication testing would still remain unaddressed. 
+
+The proposition here is to generate and execute an exhaustive set of communication tests that would cover all the interfaces of the system. This set of test would be executed all along the development phase to ensure non-regression, at FAT and one last time at SAT.
+
+This activity would take a combination of:
+
+  - PLC, SCADA, HMI low level interfaces description (out of their respective configuration tools)
+  - Asset Model and system architecture information 
+
+### Additional Context
+
+The kind of solution presented here is clearly not a revolution. The value of developing a specific solution for _Food & Beverage_ domain would lie upon a very light implementation specifically optimized to the nature of the process. Also, providing this feature outside typical DCS solutions could make it affordable for _Food & Beverage_ projects.
+
+## Next Actions
+
+. Validate the approach with Andoni Olaizola
+
+. Call Benjamin Jude 
+
+. Meet Domain actors that would be in the pool of customer targeted by Schneider Electric
+Meeting big customers, while being very interesting, may mislead us because they would probably have already developed internal solution to mitigate lacks of typical PLC and SCADA configuration tools. Small customer, which is the target of Schneider Electric for penetrating _Food & Bev._ market might give different feedbacks.
+
+. Call Denis Challon (ITRIS Automation)
+
+***
+[.text-right]
+Version: {revnumber}
+Revision: {docdatetime}
+

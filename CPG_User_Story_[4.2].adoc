@@ -1,0 +1,280 @@
+﻿[%nonfacing]
+:imagesdir: ./images 
+:toc: macro 
+:toc-title: Food & Beverage Engineering Stages : 
+:toclevels: 2
+:hardbreaks:
+:sectnums: 
+:sectlinks:
+:icons: font 
+:pdf-style: custom-style.yml 
+
+= Food & Bev. Automation System Configuration Story
+
+*_Purpose of the Document_* 
+--
+_The purpose of this document is to start formalizing what could be a CPG Automation System Design Process. The information developed hereafter is based on both :_ 
+
+ * _Danone Cikarang 2 Project information_
+ * _Self interpretation (for parts of the project lacking formal information)_
+
+_Intention here is to draft a first story in order to help brainstorming and choosing where SDEC Team can help_
+--
+
+toc::[]
+
+<<<
+## Design Cycle 
+
+The Food & Beverage industry develops its factories projects according to a V-Cycle that is:
+ * executed very fast (1 year or less)
+ * documented at minimum 
+
+Here is the V-Cycle used as context for the current document:
+
+.Liquid Factory V-Cycle
+image::V_Cycle.svg[id=V-Cycle]
+
+NOTE: The present document explores the *_Automation System Configuration User Story_*. This means that the focus is brought to the "Left & Up" hand side of the diagram. 
+
+TIP: The programming activities (bottom) and Test & Integration activities (right hand side) are not developed here and could be the topic of further Customer story / experience exploration.
+
+<<<
+## Configuration Story
+###  STAGE 1 : P&ID Highlighting
+#### Purpose
+      * Select process equipment involved in the sequence
+      * Bind the process equipment with asset libraries (BOM)
+
+#### User Action
+      * Highlights the pipes and equipment according where the fluid status is supposed to change over the Process Narrative
+      * Highlights equipment outside of the fluid path that are also involved in the sequence
+      * Gives a name to the sequence
+
+#### Configuration Tool
+      * Captures the list of equipment involved in the sequence
+      * Displays this list under a table format giving the reference of each element 
+      * Shows the DFB reference for each PLC controllable equipment
+
+#### View Point
+      * _Food & Bev. Automation System - Configuration User Story [3] - 2019.11.06 : Page 2 : P&ID Highlighting_
+      
+NOTE: _The highlighting path and its direction might be used to interpret the order of sequence internal actions. Further investigation are to be performed to validate this assumption._
+
+.P&ID Highlighting
+image::1-Highlight.png[P&ID, 1024, id=Highlight]
+
+
+<<<
+###  STAGE 2 : Sequence Initial State Definition
+#### Purpose
+      * Defines both 
+          ** equipment initial state to give context to Process Narrative definition
+          ** fluid initial stated to allow Process Narrative execution (fluid nature & sanitary state) (potential interlocks)
+      * Give the User the situation on which equipment are manually operated and which are PLC controllable
+      
+TIP: The initial state for equipment could be generated with a generic approach (valves are closed, pumps are stopped ... )
+
+#### User Action
+      * Consults (equipment) and edits (fluid) the operational context which the Process Narrative will be based on.
+      * Know which is the required initial state for Manual operated equipment --> Operation Manual
+      
+#### Configuration Tool
+      * Generates the list of equipment (Manual and PLC Operated) and displays their initial state - sensor assumptions are editable 
+      * Proposes a form to capture the fluid properties
+      * Provide the synthesis (editable) of all generic definition of : initial states, interlocks...)
+      
+#### View Point
+      * _Food & Bev. Automation System - Configuration User Story [3] - 2019.11.06 : Page 3 : Initial State of the sub-system's equipment and fluid_
+      
+.Definition of initial states for manual and PLC operated sensors and actuators + fluid states
+image::2-Initial_States.PNG[id=states]
+
+<<<
+###  STAGE 3 : Definition of the Operational Strategy / and relevant HMI equipment
+#### Purpose
+      * All the equipment involved in a Process Narrative are not available on the P&ID. We need to declare push buttons, lights and HMI elements that allows to control the process (this is not alarming related)
+      
+#### User Action
+      * Defines its control interface and declares relevant equipment
+      * May instantiate HMI templates based on former project execution and adapt to its needs (e.g. adding validation steps in the process narrative execution)
+      
+#### Configuration Tool
+      * Proposes operational strategies (format ?) / HMI templates
+         ** Action validation strategies (2 validation before action...)
+         ** Action cancellation strategies
+         ** Action emergency stop strategies colour choice (green validation, etc...)
+         
+#### View Point
+      * _See operation Manual HMI screenshot and conventional push button box picture_
+
+.Operation strategy given by the operation interface
+image::3-Operation_Strategy.png[image, 640, id=operation]
+
+<<<
+###  STAGE 4 : Process Narrative Definition
+#### Purpose 
+      * Each Sub-system can execute *Operation Sequences* that we call Process Narrative.
+      * The purpose here is to define the Process Narratives for each sub-system. 
+      * Process Narratives should be similar from a project to another. The architecture of the Sub-systems remaining the same, the intuition is that the main differences should come from sub-system sizing and operational strategy.
+      * Based on this analysis, the proposition would be to instantiate process narrative templates and to allow the user to tune them to its specific needs.
+      
+#### User Action
+      * Goes through a catalogue of Process Narrative templates that has been populated progressively on previous projects
+      * Instantiate the desired template and particularizes the sequence to its needs
+      * All the Process Narrative consumed / produced signals are connected to signal references (raw or elaborated) built in the previous stages. All the binding needs to be effective. 
+      
+#### Configuration Tool
+      * Proposes a catalogue of Process Narrative templates
+      * Proposes an editor of Process Narrative templates
+      * The Editor should propose a definition language close to the Grafcet / SFC language 
+      
+#### View Point 
+      * _Food & Bev. Automation System - Configuration User Story [3] - 2019.11.06 : Page 7 : Sequence Definition_
+
+.Process Narrative representation based on a language close to the Grafcet / State Machine
+image::4-Process_Narrative.png[id=process_narrative]
+
+<<<
+###  STAGE 5 : Interlocks Definition
+#### Purpose
+      * Interlocks are used to prevent parts of the PLC code to execute under defined circumstances. The relevant logic definition is specified differently than Process Narrative.
+      * The purpose here is to capture the Interlocks.
+
+CAUTION: The implementation of interlocks is not systematic. The strategy behind interlocks definition relies on different concerns : is there any risk associated with the event ? Is it let to operator decision ? is it implemented "by construction" (TP1, Magelis touchscreen ...) or do we need to implement an interlock rule inside PLC's and which is the PLC where the interlock needs to be inserted ... There seem to a a strategy in defining the right balance in interlocks definition : not too much but just enough not to damage the installation or waste too much raw material.
+
+#### User Action
+      * Fills Cause & Effects tables that :
+	  * capture situations
+	  * force actions 
+	  
+#### Configuration Tool
+      * Provides empty editable cause & effect tables to the user
+      
+NOTE: A generic approach to define interlocks between sequences might be adopted. The other interlocks would remain defined manually. To be discussed.
+
+      * Cause & Effect tables could be sorted in different categories :
+	     ** cross sequences
+	     ** sub-system internal
+      * Note that some very low level interlocks could be generated (e.g. do not start a pump if the downstream valve is closed)
+      
+#### View Point 
+      * _Food & Bev. Automation System - Configuration User Story [3] - 2019.11.06 : Page 11 : Interlocks_
+
+.Interlock definition interface
+image::5-Interlocks.png[id=interlocks]
+
+<<<
+###  STAGE 6 : Situation Editor
+#### Purpose
+      * Usually, in Process Narrative, Interlocks or Alarms definition, we need to capture complex situations.  These situations are based on current or passed events that can involve analogic or binary process variables, equipment state, combined with operation mode ...
+      * The purpose of this editor would be to offer a widget that can be used on purpose, in different situations when this kind of need is encountered. The typical situations :
+	     ** Interlocks definition
+	     ** Process Narrative definition
+	     ** Signalisation and Alarming definition
+	     ** System State capture
+	      
+#### User Action
+      * Creates "Elaborated Signals" based on "Raw Signals" already available in the configuration context
+      
+#### Configuration Tool
+      * Provides a list of every available signal generated by the configuration process
+      * Allows to filter this list according to natural naming conventions
+      * Allows to combine these signals with flow logic and to give a name to the elaborated signal
+      
+#### View Point
+      * _Food & Bev. Automation System - Configuration User Story [3] - 2019.11.06 : Page 9 : Signalization & Alarms_
+
+.Situation / Alarms pattern
+image::6-Situation_Editor.png[id=situations]
+
+NOTE: What is important is what is inside red boxes here. We can imagine logic diagrams based on Boolean operators
+
+.Situation editor
+image::6-Situation_Editor_bis.png[image, 400px, align='center']
+
+<<<
+###  STAGE 7 : Automation System Architecture
+#### Purpose  
+      * The project code depends of the Automation architecture and one of integration activity pain is **Interface Management**
+      * The purpose here is to declare project architecture in order to help PLC code generation go one step further and relieve interface management activity as much as possible.
+      
+#### User
+      * Declares the Automation architecture using libraries
+      * Allocates Sub-system Automation / Visualisation activities to PLC / Touch Screens / SCADA.
+      
+#### Configuration Tool
+      * The configuration tool resolves interfaces and connectivity between all "endpoints". This could be achieved by configuring automatically the I/O of each endpoints.
+      
+#### View Point 
+      * _Cikarang 2 Project Architecture_
+
+.Automation System Architecture editor
+image::7-Automation_System_Architecture.svg[align='center', id=architecture]
+
+<<<
+###  STAGE 8 : SCADA Skeleton Generation
+#### Purpose
+      * Here is considered that the SCADA is a complex development that cannot be automated entirely. However, this might be possible to automatically configures assets definition (DFB) so that all the communication part is resolved. 
+      * Purpose here is to let the SCADA designer instantiate graphical objects while not paying attention to how data is retrieved from the PLC layer.
+      * Also, we can imagine that the structure of a SCADA project would remain the same over the factories 
+      
+#### User Action
+      * Clicks on Generate "SCADA Objects"
+      * Clicks on Generate SCADA Project skeleton
+      
+#### Configuration Tool
+      * Completes SCADA libraries with connectivity information
+      * Generates SCADA Project skeleton
+      
+#### View Point 
+      * We can imagine a simple form to capture the action and allow downloading SCADA library. 
+      * _See Microgrid in a Box SDEC Configuration_
+
+.SCADA Export
+image::8-Complete_SCADA_Object.png[id=scada_export]
+
+<<<
+###  STAGE 9 : PLC Code Generation
+#### Purpose 
+      * Generate Code for all the PLC's
+      
+#### User Action
+      * Clicks on Generate PLC Code
+      
+#### Configuration Tool
+      * Generates the PLC Code
+
+#### View Point
+      * We can imagine a simple form to capture the action and allow downloading PLC Project or Code. 
+      * _See Microgrid in a Box SDEC Configuration_
+      
+IMPORTANT: PLC code generation is a complex task that is not detailed here while it would involve **loads of effort**, unless the we find an abstracted pivot language + tool that already implement code generation. Indeed, the concept is to convert as PLC code all the information captured in from **Stage 1** to **Stage 7**.
+
+.PLC Export
+image::9-PLCs_Code_Generation.png[id=plc_export]
+
+<<<
+## Meta-Models and Definition
+
+### P&ID Meta-Model
+Hereafter is proposed a meta-model for the P&ID. We focus here on the entities letting definition of attributes for further refinement.
+
+.P&ID Meta-Model
+image::P&ID.svg[id=P&ID_meta]
+
+### Process Narrative Meta-Model
+
+Hereafter is proposed a meta-model for the Process Narrative. We focus here on the entities letting definition of attributes for further refinement.
+
+.Process Narrative Meta-Model
+image::Process_Narrative.svg[id=process_narrative_meta]
+
+NOTE: Based on this modelling we encounter that the pivot component between P&ID and Process Narrative is the DFB (i.e. one facet of the Asset).
+
+WARNING: To go further in binding the P&ID and the Process Narrative we would need to overload the P&ID with functional information such as circuit highlighting and use formalized domain knowledge. This activity is complicated and far from SDEC domain. Therefore, it cannot be supported by SDEC Team. 
+
+<<<
+## Table of Figures
+
+include::.\ToI.adoc[]
