@@ -13,14 +13,14 @@ if len(sys.argv) < 2:
 
 adocFileName = str(sys.argv[1])
 
-## Build figures table
+## Build the Table of Figures as an external *.adoc file called ToF.adoc
 doc = open(adocFileName, "r")
 strDoc = str(doc.read())
 
 image = r"\.(.*)\nimage::[\w|.|&|_|-]*\[((\S)+( )+)*id=(.*)\]"
 imageList = re.findall(image, strDoc)
 
-file = open("ToI.adoc", "w+", re.MULTILINE)
+file = open("ToF.adoc", "w+", re.MULTILINE)
 i=1
 for ref in imageList:
     line = 'figure-' + str(i) + ': ' + '<<' + ref[4] + ', ' + ref[0] + '>>' '\n'
