@@ -64,9 +64,13 @@ footer:
     center:
       content: '{page-number}'
 
-outline-list:
-  item-spacing: 2
-  indent: 30
-
 caption:
   align: center
+  
+## Ajuster les espaces entre paragraphes, lignes et listes
+prose:
+  margin-bottom: 6
+
+outline-list:
+  indent: 30
+  item-spacing: 0
